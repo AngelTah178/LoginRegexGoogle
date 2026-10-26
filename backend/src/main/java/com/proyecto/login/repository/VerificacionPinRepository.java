@@ -18,18 +18,18 @@ import java.util.UUID;
 public interface VerificacionPinRepository
         extends JpaRepository<VerificacionPin, UUID> {
 
-    // Buscar desafios pendientes de un usuario.
+    // Buscar pin pendiente de un usuario.
     List<VerificacionPin> findByUsuarioIdAndUsadoFalse(
             Long usuarioId
     );
 
-    // Contar desafios generados durante la ultima hora.
+    // Contar pines generados durante la ultima hora.
     long countByUsuarioIdAndFechaCreacionUtcAfter(
             Long usuarioId,
             LocalDateTime fecha
     );
 
-    // Buscar y bloquear un desafio durante su verificacion.
+    // Buscar y bloquear un pin durante su verificacion.
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
         SELECT v
@@ -40,7 +40,7 @@ public interface VerificacionPinRepository
             @Param("id") UUID id
     );
 
-    // Obtener el ultimo desafio generado.
+    // Obtener el ultimo ín generado.
     Optional<VerificacionPin>
         findTopByUsuarioIdOrderByFechaCreacionUtcDesc(
                 Long usuarioId

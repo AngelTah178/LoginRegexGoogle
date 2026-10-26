@@ -22,7 +22,7 @@ public class AuthService {
     private final RegexService regex;
     private final BCryptPasswordEncoder encoder;
 
-    // Unico constructor utilizado por Spring Boot.
+    //
     public AuthService(
             UsuarioRepository repository,
             RegexService regex) {
@@ -46,14 +46,14 @@ public class AuthService {
     @Transactional
     public Resultado validarCredenciales(LoginRequest request) {
 
-        // 1. Validar el formato del usuario con Regex.
+        // validar usuario con regex
         if (request == null ||
                 !regex.validarUsuario(request.usuario())) {
 
             return credencialesInvalidas();
         }
 
-        // 2. Buscar usuario en SQL Server.
+        // buscar user en sql
         Usuario usuario = repository
                 .buscarParaActualizar(request.usuario())
                 .orElse(null);
@@ -65,7 +65,7 @@ public class AuthService {
         LocalDateTime ahora =
                 LocalDateTime.now(Clock.systemUTC());
 
-        // 3. Comprobar si la cuenta esta bloqueada.
+        //cuenta bloqueada
         LocalDateTime bloqueadoHasta =
                 usuario.getBloqueadoHasta();
 
@@ -78,18 +78,16 @@ public class AuthService {
                         0
                 );
             }
-
-            // El bloqueo ya vencio.
             usuario.setIntentosFallidos(0);
             usuario.setBloqueadoHasta(null);
         }
 
-        // 4. Validar formato de la contraseña.
+        // Validar formato de la contraseña.
         if (!regex.validarClave(request.clave())) {
             return registrarFallo(usuario, ahora);
         }
 
-        // 5. Comparar contraseña con BCrypt.
+        // Comparar contraseña con BCrypt.
         boolean claveCorrecta = encoder.matches(
                 request.clave(),
                 usuario.getClaveHash()
@@ -99,12 +97,12 @@ public class AuthService {
             return registrarFallo(usuario, ahora);
         }
 
-        // 6. Validar formato del correo.
+        //Validar formato del correo.
         if (!regex.validarCorreo(request.correo())) {
             return registrarFallo(usuario, ahora);
         }
 
-        // 7. Comparar con el correo almacenado.
+        // comparar con el correo
         String correoRegistrado = usuario.getCorreo();
 
         boolean correoCorrecto =
@@ -117,9 +115,7 @@ public class AuthService {
             return registrarFallo(usuario, ahora);
         }
 
-        // 8. Las credenciales son correctas.
-        // Todavia falta la verificacion mediante PIN.
-        // No reiniciamos intentos hasta completar el PIN.
+        // credenciales correctas
 
         return new Resultado(
                 Estado.PENDIENTE_PIN,
@@ -127,7 +123,7 @@ public class AuthService {
         );
     }
 
-    // Registrar un intento de autenticacion fallido.
+    // auth fallido
     private Resultado registrarFallo(
             Usuario usuario,
             LocalDateTime ahora) {
@@ -139,7 +135,7 @@ public class AuthService {
 
         usuario.setIntentosFallidos(intentos);
 
-        // Quinto fallo: bloquear durante 15 minutos.
+        // quinto fallo vale pollo
         if (intentos >= MAX_INTENTOS) {
 
             usuario.setBloqueadoHasta(
@@ -162,8 +158,7 @@ public class AuthService {
         );
     }
 
-    // Respuesta generica para usuarios inexistentes
-    // o nombres de usuario con formato incorrecto.
+    // 
     private Resultado credencialesInvalidas() {
 
         return new Resultado(

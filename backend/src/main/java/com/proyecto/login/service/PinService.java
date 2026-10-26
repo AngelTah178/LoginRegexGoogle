@@ -37,7 +37,6 @@ public class PinService {
     private final SecureRandom random;
     private final byte[] claveHmac;
 
-    // Unico constructor utilizado por Spring Boot.
     public PinService(
             VerificacionPinRepository pinRepository,
             UsuarioRepository usuarioRepository,
@@ -57,7 +56,6 @@ public class PinService {
     }
 
     // Resultado interno para enviar el PIN por Gmail.
-    // Nunca devolver el valor pin mediante HTTP.
     public record PinGenerado(
             UUID desafioId,
             String pin,
@@ -81,14 +79,11 @@ public class PinService {
             int intentosRestantes
     ) {}
 
-    // =====================================================
-    // 1. GENERAR UN NUEVO PIN
-    // =====================================================
+    //GENERAR EL NUEVO PIN
 
     @Transactional
     public PinGenerado crearPinParaUsuario(String nombreUsuario) {
 
-        // Buscar usuario con bloqueo de escritura.
         Usuario usuario = usuarioRepository
                 .buscarParaActualizar(nombreUsuario)
                 .orElseThrow(() ->
@@ -100,7 +95,7 @@ public class PinService {
         LocalDateTime ahora =
                 LocalDateTime.now(Clock.systemUTC());
 
-        // Limitar a cinco desafios por hora.
+        // limitar 5 intentos por hora
         long pinesUltimaHora =
                 pinRepository.countByUsuarioIdAndFechaCreacionUtcAfter(
                         usuario.getId(),
@@ -111,8 +106,7 @@ public class PinService {
             throw new LimitePinException();
         }
 
-        // Aplicar el intervalo de 60 segundos, incluso
-        // si el ultimo desafio ya fue utilizado.
+        //
         pinRepository
                 .findTopByUsuarioIdOrderByFechaCreacionUtcDesc(
                         usuario.getId()
@@ -184,10 +178,6 @@ public class PinService {
         );
     }
 
-    // =====================================================
-    // 2. VERIFICAR EL PIN RECIBIDO DESDE REACT
-    // =====================================================
-
     @Transactional
     public ResultadoVerificacion verificarPin(
             UUID desafioId,
@@ -204,7 +194,7 @@ public class PinService {
             );
         }
 
-        // Bloquear el desafio para evitar doble uso.
+        // Bloquear pin para reutilización
         VerificacionPin verificacion = pinRepository
                 .buscarParaActualizar(desafioId)
                 .orElse(null);
@@ -296,7 +286,6 @@ public class PinService {
         }
 
         // PIN CORRECTO.
-        // Marcarlo como utilizado.
         verificacion.setUsado(true);
         pinRepository.save(verificacion);
 
@@ -320,9 +309,7 @@ public class PinService {
         );
     }
 
-    // =====================================================
-    // 3. INVALIDAR DESAFIO
-    // =====================================================
+    //invalidar pin
 
     @Transactional
     public void invalidarDesafio(UUID desafioId) {
@@ -334,10 +321,6 @@ public class PinService {
                     pinRepository.save(verificacion);
                 });
     }
-
-    // =====================================================
-    // 4. CALCULAR HMAC-SHA256
-    // =====================================================
 
     private String calcularHmac(
             Long usuarioId,

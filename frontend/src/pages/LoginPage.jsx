@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { iniciarSesion } from "../services/AuthService";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function LoginPage({ onPinEnviado }) {
     const [formulario, setFormulario] = useState({
@@ -90,67 +91,80 @@ export default function LoginPage({ onPinEnviado }) {
         }
     }
 
+
     return (
-        <main className="login-container">
-            <section className="login-card">
-                <div className="login-icon"></div>
+        <main className="container min-vh-100 d-flex align-items-center justify-content-center">
 
-                <h1>Iniciar sesión</h1>
+            <section className="card shadow p-4 w-100" style={{ maxWidth: "420px" }}>
 
-                <p className="login-subtexto">
+                <h1 className="text-center mb-3">Iniciar sesión</h1>
+
+                <p className="text-muted text-center mb-4">
                     Ingresa tus credenciales para continuar.
                 </p>
 
                 <form onSubmit={manejarLogin}>
-                    <div className="campo">
-                        <label htmlFor="usuario">Usuario</label>
+
+                    <div className="mb-3">
+                        <label htmlFor="usuario" className="form-label">
+                            Usuario
+                        </label>
 
                         <input
                             id="usuario"
                             name="usuario"
                             type="text"
-                            autoComplete="username"
+                            className="form-control"
                             value={formulario.usuario}
                             onChange={actualizarCampo}
                             placeholder="Ingresa tu usuario"
-                            maxLength={50}
                             required
                         />
                     </div>
 
-                    <div className="campo">
-                        <label htmlFor="clave">Contraseña</label>
+                    <div className="mb-3">
+                        <label htmlFor="clave" className="form-label">
+                            Contraseña
+                        </label>
 
                         <input
                             id="clave"
                             name="clave"
                             type={mostrarClave ? "text" : "password"}
-                            autoComplete="current-password"
+                            className="form-control"
                             value={formulario.clave}
                             onChange={actualizarCampo}
                             placeholder="Ingresa tu contraseña"
                             required
                         />
 
-                        <label className="mostrar-clave">
+                        <div className="form-check mt-2">
                             <input
+                                id="mostrarClave"
                                 type="checkbox"
+                                className="form-check-input"
                                 checked={mostrarClave}
                                 onChange={(e) =>
                                     setMostrarClave(e.target.checked)
                                 }
                             />
-                            Mostrar contraseña
-                        </label>
+
+                            <label htmlFor="mostrarClave" className="form-check-label">
+                                Mostrar contraseña
+                            </label>
+                        </div>
                     </div>
 
-                    <div className="campo">
-                        <label htmlFor="correo">Correo electrónico</label>
+                    <div className="mb-3">
+                        <label htmlFor="correo" className="form-label">
+                            Correo electrónico
+                        </label>
 
                         <input
                             id="correo"
                             name="correo"
                             type="text"
+                            className="form-control"
                             value={formulario.correo}
                             onChange={actualizarCampo}
                             placeholder="ejemplo@gmail.com"
@@ -162,41 +176,35 @@ export default function LoginPage({ onPinEnviado }) {
                         <div
                             className={
                                 cuentaBloqueada
-                                    ? "login-bloqueado"
-                                    : "login-error"
+                                    ? "alert alert-danger"
+                                    : "alert alert-warning"
                             }
                             role="alert"
                         >
-                            {cuentaBloqueada ? (
-                                <>
-                                    <div className="bloqueo-icono">🔒</div>
-
-                                    <strong>Cuenta temporalmente bloqueada</strong>
-
-                                    <p>{error}</p>
-
-                                    <small>
-                                        El acceso se habilitará cuando finalice
-                                        el periodo de bloque idiota.
-                                    </small>
-                                </>
-                            ) : (
-                                <> {error}</>
+                            {cuentaBloqueada && (
+                                <h5> Cuenta temporalmente bloqueada</h5>
                             )}
+
+                            <p className="mb-0">{error}</p>
                         </div>
                     )}
 
-                    <button type="submit" disabled={cargando}>
+                    <button
+                        type="submit"
+                        disabled={cargando}
+                        className="btn btn-primary w-100"
+                    >
                         {cargando
                             ? "Validando credenciales..."
                             : "Iniciar sesión"}
                     </button>
                 </form>
 
-                <p className="login-footer">
+                <p className="text-center text-muted mt-4 mb-0">
                     LoginRegexGoogle — Proyecto Java
                 </p>
             </section>
         </main>
     );
+
 }

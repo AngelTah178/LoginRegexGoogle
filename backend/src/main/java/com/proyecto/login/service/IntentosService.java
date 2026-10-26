@@ -29,7 +29,6 @@ public class IntentosService {
         this(usuarioRepository, Clock.systemUTC());
     }
 
-    // Constructor adicional para pruebas controlando el tiempo.
     IntentosService(
             UsuarioRepository usuarioRepository,
             Clock clock) {
@@ -71,7 +70,7 @@ public class IntentosService {
         LocalDateTime bloqueo =
                 usuario.getBloqueadoHasta();
 
-        // Comprobar si el bloqueo sigue vigente.
+        //comprobar bloqueo vigente
         if (bloqueo != null && ahora.isBefore(bloqueo)) {
 
             return new ResultadoIntento(
@@ -81,7 +80,7 @@ public class IntentosService {
             );
         }
 
-        // Si el bloqueo ya vencio, reiniciar el contador.
+        // reiniciar contador
         if (bloqueo != null) {
             usuario.setIntentosFallidos(0);
             usuario.setBloqueadoHasta(null);
@@ -95,7 +94,7 @@ public class IntentosService {
 
         usuario.setIntentosFallidos(intentos);
 
-        // El quinto error activa el bloqueo.
+        // blouqo
         if (intentos >= MAX_INTENTOS) {
 
             LocalDateTime hasta =

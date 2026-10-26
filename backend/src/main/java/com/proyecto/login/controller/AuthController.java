@@ -66,7 +66,7 @@ public class AuthController {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new LoginResponse(
                             "AUTENTICACION_FALLIDA",
-                            "No fue posible autenticarte. Revisa tus datos o intenta mas tarde.",
+                            "No fue posible autenticarte, intenta más tarde.",
                             null
                     ));
         }
@@ -131,7 +131,7 @@ if (resultado.estado()
         );
     }
 
-    // SEGUNDO ENDPOINT: VERIFICAR PIN
+    //VERIFICAR PIN
     @PostMapping("/verificar-pin")
     public ResponseEntity<VerificarPinResponse> verificarPin(
             @RequestBody(required = false)

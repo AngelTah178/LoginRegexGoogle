@@ -86,29 +86,29 @@ export default function VerificarPinPage({
     }
 
     return (
-        <main className="login-container">
-            <section className="login-card">
-                <div className="login-icon">📧</div>
+        <main className="container min-vh-100 d-flex align-items-center justify-content-center">
+            <section className="card shadow p-4 w-100" style={{ maxWidth: "420px" }}>
 
-                <h1>Verifica tu correo</h1>
+                <h1 className="text-center mb-3">Verifica tu correo</h1>
 
-                <p className="login-subtexto">
+                <p className="text-muted text-center mb-4">
                     Introduce el código de seis dígitos
                     enviado a tu correo electrónico.
                 </p>
 
-                <div className="login-aviso">
+                <div className="login-subtexto mb-3 text-center">
                     Tu PIN tiene una vigencia de 5 minutos.
                 </div>
 
                 <form onSubmit={manejarVerificacion}>
                     <div className="campo">
-                        <label htmlFor="pin">Código de verificación</label>
+                        <label htmlFor="pin" className="form-label">Código de verificación</label>
 
                         <input
                             id="pin"
                             name="pin"
                             type="text"
+
                             inputMode="numeric"
                             autoComplete="one-time-code"
                             maxLength={6}
@@ -116,15 +116,15 @@ export default function VerificarPinPage({
                             placeholder="000000"
                             value={pin}
                             onChange={cambiarPin}
-                            className="pin-input"
+                            className="form-control"
                             required
                             autoFocus
                         />
                     </div>
 
                     {error && (
-                        <div className="login-error" role="alert">
-                            ❌ {error}
+                        <div className="alert alert-danger" role="alert">
+                            {error}
                         </div>
                     )}
 
@@ -133,18 +133,18 @@ export default function VerificarPinPage({
                             Intentos restantes: {intentosRestantes}
                         </p>
                     )}
-
+                    <br></br>
                     <button
-                        type="submit"
+                        type="submit" className="btn btn-primary display-block w-100"
                         disabled={cargando || pin.length !== 6}
                     >
                         {cargando ? "Verificando..." : "Verificar PIN"}
                     </button>
                 </form>
-
+                <br></br>
                 <button
                     type="button"
-                    className="boton-secundario"
+                    className="btn btn-primary"
                     onClick={onRegresar}
                     disabled={cargando}
                 >
