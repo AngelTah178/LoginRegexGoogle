@@ -7,35 +7,35 @@ import ResultadoPage from "./pages/ResultadoPage";
 
 export default function App() {
   const [pantalla, setPantalla] = useState("login");
-  const [desafioId, setDesafioId] = useState(null);
+  const [solicitudPinId, setsolicitudPinId] = useState(null);
   const [mensajeRechazo, setMensajeRechazo] = useState("");
 
   function pinEnviado(id) {
-    setDesafioId(id);
+    setsolicitudPinId(id);
     setPantalla("verificar");
   }
 
   function verificacionCorrecta() {
-    setDesafioId(null);
+    setsolicitudPinId(null);
     setPantalla("exito");
   }
 
   function verificacionRechazada(mensaje) {
     setMensajeRechazo(mensaje);
-    setDesafioId(null);
+    setsolicitudPinId(null);
     setPantalla("rechazado");
   }
 
   function regresarAlLogin() {
-    setDesafioId(null);
+    setsolicitudPinId(null);
     setMensajeRechazo("");
     setPantalla("login");
   }
 
-  if (pantalla === "verificar" && desafioId) {
+  if (pantalla === "verificar" && solicitudPinId) {
     return (
       <VerificarPinPage
-        desafioId={desafioId}
+        solicitudPinId={solicitudPinId}
         onVerificado={verificacionCorrecta}
         onRechazado={verificacionRechazada}
         onRegresar={regresarAlLogin}

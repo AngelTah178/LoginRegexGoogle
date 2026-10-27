@@ -3,7 +3,7 @@ import { useState } from "react";
 import { verificarPin } from "../services/AuthService"; { }
 
 export default function VerificarPinPage({
-    desafioId,
+    solicitudPinId,
     onVerificado,
     onRechazado,
     onRegresar,
@@ -33,7 +33,7 @@ export default function VerificarPinPage({
         setError("");
 
         try {
-            const resultado = await verificarPin(desafioId, pin);
+            const resultado = await verificarPin(solicitudPinId, pin);
 
             // Solo Java puede confirmar la verificación.
             if (resultado.ok && resultado.estado === "VERIFICADO") {

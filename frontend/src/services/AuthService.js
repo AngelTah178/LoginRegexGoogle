@@ -37,9 +37,9 @@ export function iniciarSesion(datos) {
     });
 }
 
-export function verificarPin(desafioId, pin) {
+export function verificarPin(solicitudPinId, pin) {
     return enviarSolicitud("/api/auth/verificar-pin", {
-        desafioId,
+        solicitudPinId,
         pin,
     });
 }

@@ -3,6 +3,6 @@ package com.proyecto.login.dto;
 import java.util.UUID;
 
 public record VerificarPinRequest(
-        UUID desafioId,
+        UUID solicitudPinId,
         String pin
 ) {}

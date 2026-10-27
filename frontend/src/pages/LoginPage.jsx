@@ -49,7 +49,7 @@ export default function LoginPage({ onPinEnviado }) {
             if (
                 resultado.ok &&
                 resultado.estado === "PIN_ENVIADO" &&
-                resultado.desafioId
+                resultado.solicitudPinId
             ) {
                 setCuentaBloqueada(false);
 
@@ -58,7 +58,7 @@ export default function LoginPage({ onPinEnviado }) {
                     clave: "",
                 }));
 
-                onPinEnviado(resultado.desafioId);
+                onPinEnviado(resultado.solicitudPinId);
                 return;
             }
 

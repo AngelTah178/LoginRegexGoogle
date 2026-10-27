@@ -57,7 +57,7 @@ public class PinService {
 
     // Resultado interno para enviar el PIN por Gmail.
     public record PinGenerado(
-            UUID desafioId,
+            UUID solicitudPinId,
             String pin,
             LocalDateTime expiraUtc,
             String correoRegistrado
@@ -142,7 +142,7 @@ public class PinService {
                 random.nextInt(1_000_000)
         );
 
-        UUID desafioId = UUID.randomUUID();
+        UUID solicitudPinId = UUID.randomUUID();
 
         LocalDateTime expiracion =
                 ahora.plusMinutes(MINUTOS_VIGENCIA);
@@ -151,14 +151,14 @@ public class PinService {
         VerificacionPin verificacion =
                 new VerificacionPin();
 
-        verificacion.setId(desafioId);
+        verificacion.setId(solicitudPinId);
         verificacion.setUsuarioId(usuario.getId());
 
         // Guardar el HMAC, no el PIN original.
         verificacion.setPinHash(
                 calcularHmac(
                         usuario.getId(),
-                        desafioId,
+                        solicitudPinId,
                         pin
                 )
         );
@@ -171,7 +171,7 @@ public class PinService {
         pinRepository.save(verificacion);
 
         return new PinGenerado(
-                desafioId,
+                solicitudPinId,
                 pin,
                 expiracion,
                 usuario.getCorreo()
@@ -180,11 +180,11 @@ public class PinService {
 
     @Transactional
     public ResultadoVerificacion verificarPin(
-            UUID desafioId,
+            UUID solicitudPinId,
             String pin) {
 
         // Validar formato.
-        if (desafioId == null
+        if (solicitudPinId == null
                 || pin == null
                 || !pin.matches("[0-9]{6}")) {
 
@@ -196,7 +196,7 @@ public class PinService {
 
         // Bloquear pin para reutilización
         VerificacionPin verificacion = pinRepository
-                .buscarParaActualizar(desafioId)
+                .buscarParaActualizar(solicitudPinId)
                 .orElse(null);
 
         if (verificacion == null) {
@@ -206,7 +206,7 @@ public class PinService {
             );
         }
 
-        // Comprobar si el desafio ya fue consumido.
+        // Comprobar si el pin
         if (verificacion.getIntentosFallidos()
                 >= MAX_INTENTOS_PIN) {
 
@@ -242,7 +242,7 @@ public class PinService {
         // Calcular el HMAC del codigo recibido.
         String hmacCalculado = calcularHmac(
                 verificacion.getUsuarioId(),
-                desafioId,
+                solicitudPinId,
                 pin
         );
 
@@ -312,9 +312,9 @@ public class PinService {
     //invalidar pin
 
     @Transactional
-    public void invalidarDesafio(UUID desafioId) {
+    public void invalidarDesafio(UUID solicitudPinId) {
 
-        pinRepository.findById(desafioId)
+        pinRepository.findById(solicitudPinId)
                 .ifPresent(verificacion -> {
 
                     verificacion.setUsado(true);
@@ -324,7 +324,7 @@ public class PinService {
 
     private String calcularHmac(
             Long usuarioId,
-            UUID desafioId,
+            UUID solicitudPinId,
             String pin) {
 
         try {
@@ -339,7 +339,7 @@ public class PinService {
 
             String contenido =
                     usuarioId + ":" +
-                    desafioId + ":" +
+                    solicitudPinId + ":" +
                     pin;
 
             byte[] resultado = mac.doFinal(

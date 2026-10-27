@@ -110,7 +110,7 @@ if (resultado.estado()
         } catch (MailException ex) {
 
             pinService.invalidarDesafio(
-                    generado.desafioId()
+                    generado.solicitudPinId()
             );
 
             return ResponseEntity
@@ -126,7 +126,7 @@ if (resultado.estado()
                 new LoginResponse(
                         "PIN_ENVIADO",
                         "Si la entrega se completa, recibiras un codigo de verificacion.",
-                        generado.desafioId()
+                        generado.solicitudPinId()
                 )
         );
     }
@@ -138,7 +138,7 @@ if (resultado.estado()
             VerificarPinRequest request) {
 
         if (request == null
-                || request.desafioId() == null
+                || request.solicitudPinId() == null
                 || request.pin() == null
                 || !request.pin().matches("[0-9]{6}")) {
 
@@ -153,7 +153,7 @@ if (resultado.estado()
 
         PinService.ResultadoVerificacion resultado =
                 pinService.verificarPin(
-                        request.desafioId(),
+                        request.solicitudPinId(),
                         request.pin()
                 );
 
